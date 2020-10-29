@@ -3,13 +3,13 @@ const fs = require("fs");
 var phases_src = require("./phases_src.json");
 var phases = [];
 
-function genItem(diff, name) {
+function genItem(diff, phase) {
     var date = new Date(diff);
     var strDate = date.toDateString().split(" ");
     var strTime = date.toTimeString().split(" ")[0].split(":");
 
     var item = {};
-    item.name = name;
+    item.phase = phase;
     item.date = strDate[3] + " " + strDate[1] + " " + strDate[2];
     item.time = strTime[0] + ":" + strTime[1];
 
