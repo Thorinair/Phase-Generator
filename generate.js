@@ -3,22 +3,26 @@ const fs = require("fs");
 var phases_src = require("./phases_src.json");
 var phases = [];
 
-function genItem(diff, phase) {
-    var date = new Date(diff);
-    var strDate = date.toDateString().split(" ");
-    var strTime = date.toTimeString().split(" ")[0].split(":");
+function fixDate(dateString) {
+    var date = new Date(dateString);
+    date = date.getTime() + 11 * 1000 * 60 * 60;
+    return new Date(date);
+}
 
+function genItem(diff, phase) {
     var item = {};
     item.phase = phase;
-    item.date = strDate[3] + " " + strDate[1] + " " + strDate[2];
-    item.time = strTime[0] + ":" + strTime[1];
+    item.date = fixDate(diff).toUTCString();
 
     return item;
 }
 
 phases_src.forEach(function(p, i) {
     if (i == 0) {
-        phases.push(p);
+        var item = {};
+        item.phase = p.phase;
+        item.date = fixDate(p.date + " " + p.time).toUTCString();
+        phases.push(item);
     }
     else {
         var datePhasePrev = new Date(phases_src[i-1].date + " " + phases_src[i-1].time);
@@ -29,7 +33,10 @@ phases_src.forEach(function(p, i) {
         phases.push(genItem(datePhasePrev.getTime() + step * 2, "New Moon"));
         phases.push(genItem(datePhasePrev.getTime() + step * 3, "First Quarter"));
 
-        phases.push(p);        
+        var item = {};
+        item.phase = p.phase;
+        item.date = fixDate(p.date + " " + p.time).toUTCString();
+        phases.push(item);
     }
 });
 
